@@ -1,0 +1,104 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: estore-ingress
+  labels:
+    app: estore
+  annotations:
+    {{- if .Values.ingress.className }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          # Backend API paths
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /buyer
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /seller
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /products
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /orders
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /cart
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /payments
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /address
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: {{ .Values.backend.port }}
+          # Frontend - catch all other paths
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: {{ .Values.frontend.port }}
+{{- end }}
+
+

@@ -1,0 +1,49 @@
+# Docker Registry Configuration (Update with your Docker Hub username)
+registry: docker.io
+username: yourusername  # CHANGE THIS to your Docker Hub username
+
+mysql:
+  image: mysql:8.0
+  storage: 5Gi
+  rootPassword: Seshasaich@123
+  database: lldb
+
+backend:
+  image: yourusername/estore-backend:latest  # CHANGE THIS
+  replicas: 2
+  port: 8086
+  nodePort: 30086
+  env:
+    mailHost: smtp.gmail.com
+    mailPort: 587
+    mailUsername: llcart2024@gmail.com
+    mailPassword: yourpassword
+    razorpayKeyId: rzp_test_jVej2lE9ffasi1
+    razorpaySecretKey: 7MrYfpK5LmPzhg1jsM31kVlJ
+
+frontend:
+  image: yourusername/estore-frontend:latest  # CHANGE THIS
+  replicas: 2
+  port: 80
+  nodePort: 30080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: estore.local  # Change to your domain for production
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+autoscaling:
+  backend:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+  frontend:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70

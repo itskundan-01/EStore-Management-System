@@ -1,0 +1,73 @@
+services:
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: estore-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Seshasaich@123
+      MYSQL_DATABASE: lldb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pSeshasaich@123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - estore-network
+
+  # Backend Spring Boot Application
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: estore-backend
+    restart: always
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/lldb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Seshasaich@123
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: llcart2024@gmail.com
+      SPRING_MAIL_PASSWORD: yourpassword
+      RAZORPAY_KEY_ID: rzp_test_jVej2lE9ffasi1
+      RAZORPAY_SECRET_KEY: 7MrYfpK5LmPzhg1jsM31kVlJ
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - estore-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Frontend React Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    container_name: estore-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - estore-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  estore-network:
+    driver: bridge
