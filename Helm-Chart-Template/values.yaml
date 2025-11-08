@@ -1,6 +1,6 @@
 # Docker Registry Configuration (Update with your Docker Hub username)
 registry: docker.io
-username: yourusername  # CHANGE THIS to your Docker Hub username
+username: itskundan  # Docker Hub username
 
 mysql:
   image: mysql:8.0
@@ -9,7 +9,7 @@ mysql:
   database: lldb
 
 backend:
-  image: yourusername/estore-backend:latest  # CHANGE THIS
+  image: itskundan/estore-backend:latest
   replicas: 2
   port: 8086
   nodePort: 30086
@@ -22,7 +22,7 @@ backend:
     razorpaySecretKey: 7MrYfpK5LmPzhg1jsM31kVlJ
 
 frontend:
-  image: yourusername/estore-frontend:latest  # CHANGE THIS
+  image: itskundan/estore-frontend:latest
   replicas: 2
   port: 80
   nodePort: 30080
